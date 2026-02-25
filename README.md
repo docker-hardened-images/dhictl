@@ -19,10 +19,8 @@ simplify compliance, DHI integrates easily into your existing Docker-based workf
 
 ## Installation
 
-`dhictl` is available by default on [Docker Desktop](https://docs.docker.com/desktop/) starting with version `4.63`.
-Run `docker dhi` in your terminal to check if you have it installed. If not, update your Docker Desktop to the latest version.
-
-You can also install `dhictl` manually as a Docker CLI plugin or as a standalone binary.
+`dhictl` will be available by default on [Docker Desktop](https://docs.docker.com/desktop/) soon.
+In the meantime, you can also install `dhictl` manually as a Docker CLI plugin or as a standalone binary.
 
 ### Docker CLI Plugin
 
