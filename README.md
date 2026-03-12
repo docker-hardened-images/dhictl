@@ -1,23 +1,19 @@
-# dhictl
+<img alt="dhi-banner" src="https://github.com/user-attachments/assets/fc0ca203-3f25-4ae5-aa8e-e3918bbcc31f" />
 
-[Docker Hardened Images](https://www.docker.com/products/hardened-images/) (DHI) are minimal, secure, and
-production-ready container base and application images maintained by Docker. Designed to reduce vulnerabilities and
-simplify compliance, DHI integrates easily into your existing Docker-based workflows with little to no retooling required.
+# Docker Hardened Images - dhictl
 
-`dhictl` is a command-line interface (CLI) tool for managing Docker Hardened Images:
+`dhictl` is a command-line interface (CLI) tool for managing [Docker Hardened Images](https://www.docker.com/products/hardened-images/) (DHI) — minimal, secure, and production-ready container base and application images maintained by Docker.
+
+## 🎯 Overview
+
+`dhictl` lets you:
+
 - Browse the catalog of available DHI images and their metadata
 - Mirror DHI images to your Docker Hub organization
 - Create and manage customizations of DHI images
 - Monitor customization builds
 
----
-
-- [Installation](#installation)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [License](#license)
-
-## Installation
+## 📦 Installation
 
 `dhictl` will be available by default on [Docker Desktop](https://docs.docker.com/desktop/) soon.
 In the meantime, you can also install `dhictl` manually as a Docker CLI plugin or as a standalone binary.
@@ -42,7 +38,7 @@ In the meantime, you can also install `dhictl` manually as a Docker CLI plugin o
     - `mv dhictl /usr/local/bin/` on _Linux_ and _macOS_
     - Move `dhictl.exe` to a directory in your `PATH` on _Windows_
 
-## Usage
+## 🚀 Usage
 
 > **Note**: The following examples use `dhictl` to reference the CLI tool. Depending on your installation, you may need to replace `dhictl` with `docker dhi`.
 
@@ -218,7 +214,7 @@ dhictl mirror list --org my-org --json
 dhictl customization list --org my-org --json
 ```
 
-## Configuration
+## ⚙️ Configuration
 
 `dhictl` can be configured with a YAML file located at:
 - `$HOME/.config/dhictl/config.yaml` on _Linux_ and _macOS_
@@ -236,6 +232,16 @@ Available configuration options:
 
 Environment variables take precedence over configuration file values.
 
-## License
+## 📄 License
 
 `dhictl` is licensed under the Terms and Conditions of the [Docker Subscription Service Agreement](https://www.docker.com/legal/docker-subscription-service-agreement/).
+
+## 🔗 Links
+
+- **Docker Hardened Images**: [docker.com/products/hardened-images](https://docker.com/products/hardened-images/)
+- **Issue Tracker**: [GitHub Issues](https://github.com/docker-hardened-images/dhictl/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/orgs/docker-hardened-images/discussions)
+
+---
+
+**Docker Hardened Images** - Building secure containers, together.
