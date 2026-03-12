@@ -2,8 +2,6 @@
 
 Thank you for your interest in contributing to the Docker Hardened Images community! This repository serves as a central place for community discussion, questions, and collaboration around hardened container images.
 
-> **Important:** If you make any contribution to this project you agree that it is contributed under [Apache 2.0](LICENSE.txt).
-
 ## How to Contribute
 
 ### 🗣️ Participate in Discussions
