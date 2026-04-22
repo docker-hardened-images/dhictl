@@ -141,9 +141,9 @@ To prepare customizations for multiple targets at once, pipe a JSON array of `{d
 echo '[
   {"destination": "my-org/dhi-golang", "tag-definition-id": "golang/alpine-3.23/1.26"},
   {"destination": "my-org/dhi-golang", "tag-definition-id": "golang/alpine-3.23/1.26-dev"},
-  {"destination": "my-org/dhi-other-golang", "tag-definition-id": "golang/alpine-3.23/1.26-dev"},
-  {"destination": "my-org/dhi-other-golang", "tag-definition-id": "golang/alpine-3.23/1.26"},
-]' | dhictl customization prepare --name "bulk golang" > my-bulk-customization.yaml
+  {"destination": "my-org/dhi-python", "tag-definition-id": "python/alpine-3.23/3.14-dev"},
+  {"destination": "my-org/dhi-python", "tag-definition-id": "python/alpine-3.23/3.14"}
+]' | dhictl customization prepare --name "cross repo customization" > my-bulk-customization.yaml
 ```
 
 The generated YAML will have a `targets` list instead of a single target. Note that some options (like `accounts` and `entrypoint`) are not available in bulk mode since they may not apply uniformly across all targets.
