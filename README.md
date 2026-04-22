@@ -10,8 +10,9 @@
 
 - Browse the catalog of available DHI images and their metadata
 - Mirror DHI images to your Docker Hub organization
-- Create and manage customizations of DHI images
+- Create and manage customizations of DHI images (including bulk operations)
 - Monitor customization builds
+- Inspect attestations attached to DHI images (SLSA provenance, SBOMs)
 
 ## 📦 Installation
 
@@ -121,12 +122,100 @@ Generate a customization YAML file from a DHI base image tag:
 dhictl customization prepare --org my-org golang 1.25 \
   --destination my-org/dhi-golang \
   --name "golang with git" \
-  --output my-customization.yaml
+  > my-customization.yaml
 ```
 
 > The YAML customization syntax documentation is coming soon.
 
 Edit the generated YAML file to add packages, environment variables, or other changes, then create the customization:
+
+```bash
+dhictl customization create --org my-org my-customization.yaml
+```
+
+#### Prepare a bulk customization scaffold
+
+To prepare customizations for multiple targets at once, pipe a JSON array of `{destination, tag-definition-id}` objects via stdin:
+
+```bash
+echo '[
+  {"destination": "my-org/dhi-golang", "tag-definition-id": "golang/alpine-3.23/1.26"},
+  {"destination": "my-org/dhi-golang", "tag-definition-id": "golang/alpine-3.23/1.26-dev"},
+  {"destination": "my-org/dhi-other-golang", "tag-definition-id": "golang/alpine-3.23/1.26-dev"},
+  {"destination": "my-org/dhi-other-golang", "tag-definition-id": "golang/alpine-3.23/1.26"},
+]' | dhictl customization prepare --name "bulk golang" > my-bulk-customization.yaml
+```
+
+The generated YAML will have a `targets` list instead of a single target. Note that some options (like `accounts` and `entrypoint`) are not available in bulk mode since they may not apply uniformly across all targets.
+
+Edit the YAML and create all customizations in one go:
+
+```bash
+dhictl customization create --org my-org my-bulk-customization.yaml
+```
+
+#### Converting a single customization to bulk
+
+To apply the same customization to additional targets, retrieve the existing YAML and add entries to the `targets` list:
+
+```bash
+dhictl customization get --org my-org <customization-id> > my-customization.yaml
+```
+
+The YAML will have a single target:
+
+```yaml
+targets:
+  - destination: my-org/dhi-golang
+    tag_definition_id: golang/debian-13/1.26
+```
+
+Add more targets to turn it into a bulk customization:
+
+```yaml
+targets:
+  - destination: my-org/dhi-golang
+    tag_definition_id: golang/debian-13/1.26
+  - destination: my-org/dhi-golang
+    tag_definition_id: golang/alpine-3.23/1.26
+  - destination: my-org/dhi-golang
+    tag_definition_id: golang/alpine-3.23/1.26-dev
+```
+
+> **Note**: applying the same customization across distributions is only possible if all referenced packages exist in every distribution with the same name, otherwise the build will fail.
+
+Then create the new customizations from the updated YAML:
+
+```bash
+dhictl customization create --org my-org my-customization.yaml
+```
+
+#### Converting a bulk customization back to single
+
+To narrow a bulk customization back to a single target, retrieve the YAML and reduce the `targets` list to one entry:
+
+```bash
+dhictl customization get --org my-org <customization-id> --output my-customization.yaml
+```
+
+Edit the YAML to keep only one target, then you can also uncomment the `accounts` and `entrypoint` sections that are unavailable in bulk mode:
+
+```yaml
+targets:
+  - destination: my-org/dhi-golang
+    tag_definition_id: golang/debian-13/1.26
+
+accounts:
+  runs-as: nonroot
+  users:
+    - name: nonroot
+      uid: 65532
+  groups:
+    - name: nonroot
+      gid: 65532
+```
+
+Create a new customization from the updated YAML:
 
 ```bash
 dhictl customization create --org my-org my-customization.yaml
@@ -204,6 +293,60 @@ View build logs:
 dhictl customization build logs --org my-org <customization-id> <build-id>
 ```
 
+### Inspect Attestations
+
+DHI images ship with attestations (SLSA provenance, SBOMs, etc.) attached as OCI referrers. Use the `attestation` commands to list and retrieve them.
+
+#### List attestations for an image
+
+```bash
+dhictl attestation list dhi.io/nginx:1.27
+```
+
+Filter by platform or predicate type:
+
+```bash
+# Filter by platform
+dhictl attestation list dhi.io/nginx:1.27 --platform linux/amd64
+
+# Filter by predicate type
+dhictl attestation list dhi.io/nginx:1.27 --predicate-type https://spdx.dev/Document
+
+# Filter by multiple predicate types
+dhictl attestation list dhi.io/nginx:1.27 \
+  --predicate-type https://spdx.dev/Document \
+  --predicate-type https://slsa.dev/provenance/v1
+```
+
+#### Get a specific attestation
+
+First list the available attestations to find the referrer digest, then retrieve the full in-toto statement:
+
+```bash
+dhictl attestation get dhi.io/nginx:1.27 sha256:<digest>
+```
+
+Save the attestation to a file or extract the predicate with `jq`:
+
+```bash
+# Save to file
+dhictl attestation get dhi.io/nginx:1.27 sha256:<digest> --output provenance.json
+
+# Extract the predicate
+dhictl attestation get dhi.io/nginx:1.27 sha256:<digest> | jq .predicate
+```
+
+#### View the SBOM
+
+Display a human-readable summary of the SPDX SBOM attached to an image:
+
+```bash
+dhictl attestation sbom dhi.io/nginx:1.27
+
+# For a specific platform
+dhictl attestation sbom dhi.io/nginx:1.27 --platform linux/amd64
+```
+
 ### JSON Output
 
 Most list and get commands support a `--json` flag for machine-readable output:
@@ -212,6 +355,7 @@ Most list and get commands support a `--json` flag for machine-readable output:
 dhictl catalog list --json
 dhictl mirror list --org my-org --json
 dhictl customization list --org my-org --json
+dhictl attestation list dhi.io/nginx:1.27 --json
 ```
 
 ## ⚙️ Configuration
