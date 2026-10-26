@@ -100,6 +100,9 @@ dhictl mirror start --org my-org \
   -r dhi/prometheus-chart,my-org/dhi-prometheus-chart
 ```
 
+> [!IMPORTANT]
+> Starting a mirror does not grant any team access to it. When you create a mirror in the Docker Hub UI, you are implicitly added to a new team with admin access to the mirrored repositories. That does not happen with `dhictl` (or Terraform), so the mirrored repositories won't be visible to organization members in Docker Hub until you set [repository permissions for their team](https://docs.docker.com/accounts/organization/manage/manage-a-team/#set-team-repository-permissions) in the Docker Hub UI or with the [`docker_hub_repository_team_permission`](https://github.com/docker/terraform-provider-docker/blob/main/docs/resources/hub_repository_team_permission.md) Terraform resource.
+
 List mirrored images in your organization:
 
 ```bash
