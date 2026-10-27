@@ -100,6 +100,9 @@ dhictl mirror start --org my-org \
   -r dhi/prometheus-chart,my-org/dhi-prometheus-chart
 ```
 
+> [!IMPORTANT]
+> Mirroring a repository does not automatically grant every organization member access to it. Members without access to the destination repository need appropriate [team repository permissions](https://docs.docker.com/accounts/organization/manage/manage-a-team/#set-team-repository-permissions), which can be set in Docker Hub.
+
 List mirrored images in your organization:
 
 ```bash
